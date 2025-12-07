@@ -44,48 +44,61 @@ export default function App() {
   };
 
   useEffect(() => {
-    const options = {
-      threshold: [0.25, 0.5, 0.75],
-      rootMargin: "-72px 0px 0px 0px",
-    };
+    const handleScroll = () => {
+      const headerOffset = 72;
+      const scrollPosition = window.scrollY + headerOffset + 1;
+      const order = ["memorial", "letters", "myHall", "reserve"];
 
-    const observer = new IntersectionObserver((entries) => {
-      let mostVisibleSection = null;
-      let maxRatio = 0;
-
-      entries.forEach((entry) => {
-        if (
-          inlineReserveRef.current &&
-          entry.target === inlineReserveRef.current
-        ) {
-          setIsInlineVisible(entry.isIntersecting);
-          return;
-        }
-
-        const tabId = entry.target.getAttribute("data-tab-id");
-
-        if (tabId === "reserve") {
-          setHideFloating(entry.isIntersecting);
-        }
-
-        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-          maxRatio = entry.intersectionRatio;
-          mostVisibleSection = tabId;
+      let nextActive = order[0];
+      order.forEach((key) => {
+        const ref = sectionRefs[key];
+        if (ref.current && scrollPosition >= ref.current.offsetTop) {
+          nextActive = key;
         }
       });
 
-      if (mostVisibleSection) {
-        setActiveTab(mostVisibleSection);
-      }
-    }, options);
+      setActiveTab((prev) => (prev !== nextActive ? nextActive : prev));
+    };
 
-    const observedRefs = [...Object.values(sectionRefs), inlineReserveRef];
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    observedRefs.forEach((ref) => {
-      if (ref.current) observer.observe(ref.current);
-    });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    return () => observer.disconnect();
+  useEffect(() => {
+    const reserveObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (reserveRef.current && entry.target === reserveRef.current) {
+            setHideFloating(entry.isIntersecting);
+          }
+        });
+      },
+      { threshold: 0, rootMargin: "-72px 0px 0px 0px" }
+    );
+
+    const inlineObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (
+            inlineReserveRef.current &&
+            entry.target === inlineReserveRef.current
+          ) {
+            setIsInlineVisible(entry.isIntersecting);
+          }
+        });
+      },
+      { threshold: 0 }
+    );
+
+    if (reserveRef.current) reserveObserver.observe(reserveRef.current);
+    if (inlineReserveRef.current) inlineObserver.observe(inlineReserveRef.current);
+
+    return () => {
+      reserveObserver.disconnect();
+      inlineObserver.disconnect();
+    };
   }, []);
 
   return (

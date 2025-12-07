@@ -22,7 +22,7 @@ function Header({ inlineRef, onReserveClick }) {
 }
 
 const HeaderContainer = styled.header`
-  padding: 60px 0;
+  padding: 60px 0 24px 0;
   display: flex;
   flex-direction: column;
   align-items: center;

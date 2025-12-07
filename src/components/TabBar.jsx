@@ -31,9 +31,12 @@ const TabBarContainer = styled.nav`
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(255, 247, 240, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #ffe0c2;
+  padding: 36px 11px 0 9px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #f3f3f3;
+  background: #fff;
+  box-shadow: 0 4px 8.7px 0 rgba(0, 0, 0, 0.03);
 `;
 
 const TabList = styled.div`
