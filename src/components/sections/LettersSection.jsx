@@ -1,16 +1,129 @@
-import React, { forwardRef } from "react";
+// src/features/Landing/components/LettersSection.jsx
+import React, { forwardRef, useState } from "react";
 import {
   SectionContainer,
   SectionIconWrapper,
   SectionLabel,
-  SectionSubtitle,
-  SectionTitle,
 } from "./SectionBase";
 import styled from "styled-components";
 
 import ImgPostBox from "../../assets/img-postbox.svg";
+import ImgLetter1 from "../../assets/img-letter-1.svg";
+import ImgLetter2 from "../../assets/img-letter-2.svg";
+import ImgLetter3 from "../../assets/img-letter-3.svg";
+
+const LETTER_IMAGES = [ImgLetter1, ImgLetter2, ImgLetter3];
 
 const LettersSection = forwardRef((_, ref) => {
+  // 1번(0 index)이 맨 앞, 그 뒤로 2, 3
+  const [order, setOrder] = useState([0, 1, 2]);
+
+  // 드래그 상태
+  const [dragState, setDragState] = useState({
+    isDragging: false,
+    activeId: null,
+    startX: 0,
+    startY: 0,
+    dx: 0,
+    dy: 0,
+  });
+
+  // 카드가 화면 밖으로 날아가는 상태
+  const [leaving, setLeaving] = useState({
+    cardId: null,
+    dir: 0,
+  });
+
+  const frontCardId = order[0];
+
+  const startDrag = (x, y) => {
+    if (leaving.dir !== 0) return; // 애니메이션 중이면 무시
+
+    setDragState({
+      isDragging: true,
+      activeId: frontCardId,
+      startX: x,
+      startY: y,
+      dx: 0,
+      dy: 0,
+    });
+  };
+
+  const moveDrag = (x, y) => {
+    setDragState((prev) => {
+      if (!prev.isDragging) return prev;
+      return {
+        ...prev,
+        dx: x - prev.startX,
+        dy: y - prev.startY,
+      };
+    });
+  };
+
+  const endDrag = () => {
+    setDragState((prev) => {
+      if (!prev.isDragging) return prev;
+
+      const threshold = 80;
+      const { dx, activeId } = prev;
+
+      if (Math.abs(dx) > threshold && activeId !== null) {
+        const dir = dx > 0 ? 1 : -1;
+
+        setLeaving({ dir, cardId: activeId });
+
+        // 0.3초 후 카드 순서 재정렬 (앞에 있던 카드를 맨 뒤로 보냄)
+        setTimeout(() => {
+          setOrder((old) => {
+            if (old[0] !== activeId) return old;
+            const [, ...rest] = old;
+            return [...rest, activeId];
+          });
+          setLeaving({ dir: 0, cardId: null });
+        }, 300);
+      }
+
+      return {
+        isDragging: false,
+        activeId: null,
+        startX: 0,
+        startY: 0,
+        dx: 0,
+        dy: 0,
+      };
+    });
+  };
+
+  const handleMouseDown = (e) => {
+    startDrag(e.clientX, e.clientY);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!dragState.isDragging) return;
+    moveDrag(e.clientX, e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    if (!dragState.isDragging) return;
+    endDrag();
+  };
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    startDrag(touch.clientX, touch.clientY);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!dragState.isDragging) return;
+    const touch = e.touches[0];
+    moveDrag(touch.clientX, touch.clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!dragState.isDragging) return;
+    endDrag();
+  };
+
   return (
     <SectionContainer
       ref={ref}
@@ -21,63 +134,89 @@ const LettersSection = forwardRef((_, ref) => {
         <img
           src={ImgPostBox}
           style={{ marginTop: "35px", marginBottom: "6px" }}
+          alt="postbox"
         />
         <SectionLabel style={{ color: "#E96D6D" }}>편지함</SectionLabel>
       </SectionIconWrapper>
+
       <LetterTitle>보고픈 마음을 담아 고인께 편지를 남겨보세요</LetterTitle>
-      <LetterPreviewWrapper>
-        <LetterPaper>
-          <LetterHeader>To. 사랑하는 아버지께</LetterHeader>
-          <LetterBody>
-            오늘도 아버지가 좋아하시던 길을 따라 걸었습니다. 함께 보았던 벚꽃은
-            벌써 지고 없지만, 그날의 따뜻한 손길과 웃음은 그대로 남아 있는 것
-            같아요. 바쁘다는 이유로 미뤄두었던 말들, 이제라도 천천히 적어 내려가
-            보려 합니다...
-          </LetterBody>
-          <LetterFooter>– 막내딸 수진이</LetterFooter>
-        </LetterPaper>
-      </LetterPreviewWrapper>
+
+      <LetterStackWrapper>
+        <LetterCardStack>
+          {order.map((cardIndex, idx) => {
+            const image = LETTER_IMAGES[cardIndex];
+
+            const isFront = idx === 0;
+            const depth = idx; // 0: 맨 앞, 1·2: 뒤쪽 카드
+
+            let transform = "";
+            let opacity = 1;
+            let filter = "brightness(1)";
+            let zIndex = 10 - idx;
+
+            if (isFront) {
+              // 맨 앞 카드
+              if (
+                dragState.isDragging &&
+                dragState.activeId === cardIndex &&
+                leaving.dir === 0
+              ) {
+                const rotate = dragState.dx * 0.08;
+                transform = `translate(${dragState.dx}px, ${dragState.dy}px) rotate(${rotate}deg)`;
+              } else if (leaving.dir !== 0 && leaving.cardId === cardIndex) {
+                const endX = 260 * leaving.dir;
+                transform = `translate(${endX}px, 40px) rotate(${
+                  leaving.dir * 25
+                }deg)`;
+                opacity = 0;
+              } else {
+                transform = "translate(0px, 0px) rotate(0deg)";
+              }
+            } else {
+              // 뒤에 있는 카드들: 오른쪽으로 겹쳐지게
+              const scale = 1 - depth * 0.04;
+              const tx = depth * 30; // 👉 오른쪽으로 이동
+              const ty = depth * -25;
+              const rot = depth * 3;
+
+              transform = `scale(${scale}) translate(${tx}px, ${ty}px) rotate(${rot}deg)`;
+              opacity = 1 - depth * 0.08;
+              filter = `brightness(${1 - depth * 0.15})`;
+            }
+
+            const handlers = isFront
+              ? {
+                  onMouseDown: handleMouseDown,
+                  onMouseMove: handleMouseMove,
+                  onMouseUp: handleMouseUp,
+                  onMouseLeave: handleMouseUp,
+                  onTouchStart: handleTouchStart,
+                  onTouchMove: handleTouchMove,
+                  onTouchEnd: handleTouchEnd,
+                }
+              : {};
+
+            return (
+              <SwipeCard
+                key={cardIndex}
+                style={{ transform, opacity, filter, zIndex }}
+                {...handlers}
+              >
+                <LetterImage src={image} alt={`letter-${cardIndex + 1}`} />
+              </SwipeCard>
+            );
+          })}
+        </LetterCardStack>
+      </LetterStackWrapper>
     </SectionContainer>
   );
 });
 
-const SectionIconLetter = styled.div`
-  font-size: 2rem;
-`;
+LettersSection.displayName = "LettersSection";
 
-const LetterPreviewWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+export default LettersSection;
 
-const LetterPaper = styled.div`
-  width: 100%;
-  max-width: 320px;
-  background: #fffdf7;
-  border-radius: 18px;
-  padding: 1.1rem 1.1rem 1.2rem;
-  box-shadow: 0 10px 22px rgba(196, 151, 132, 0.25);
-`;
-
-const LetterHeader = styled.div`
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: #4b3a30;
-  margin-bottom: 0.65rem;
-`;
-
-const LetterBody = styled.p`
-  font-size: 0.76rem;
-  color: #705c4c;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-`;
-
-const LetterFooter = styled.div`
-  font-size: 0.72rem;
-  color: #b19b86;
-  text-align: right;
-`;
+/* ---------- styled-components ---------- */
 
 const LetterTitle = styled.div`
   color: var(--50, #7a7a7a);
@@ -89,6 +228,32 @@ const LetterTitle = styled.div`
   line-height: 145%; /* 23.2px */
 `;
 
-LettersSection.displayName = "LettersSection";
+const LetterStackWrapper = styled.div`
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+`;
 
-export default LettersSection;
+const LetterCardStack = styled.div`
+  position: relative;
+  width: 260px;
+  height: 413px;
+  background: transparent;
+`;
+
+const SwipeCard = styled.div`
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  box-shadow: 4.5px -2.7px 1.8px 0 rgba(0, 0, 0, 0.22);
+  touch-action: none;
+  transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+  background-color: #fffdf7;
+`;
+
+const LetterImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+`;

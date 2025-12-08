@@ -213,7 +213,7 @@ const MemorialSection = forwardRef((_, ref) => {
         </FadeInItem>
 
         <FadeInItem $visible={isLinkVisible} $delay="0.2s">
-          <img src={ImgMockUp} />
+          <img src={ImgMockUp} style={{ width: "100%", display: "block" }} />
         </FadeInItem>
       </FadeInWrapper>
     </SectionContainer>
