@@ -130,5 +130,4 @@ const PageWrapper = styled.div`
   max-width: 430px;
   margin: 0 auto;
   background: #fff7f0;
-  padding-bottom: 120px;
 `;

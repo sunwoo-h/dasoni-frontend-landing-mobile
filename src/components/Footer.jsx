@@ -1,31 +1,66 @@
 import React from "react";
 import styled from "styled-components";
 
+import ImgFooter from "../assets/img-footer.svg";
+
 function Footer() {
   return (
-    <FooterContainer>
-      <FooterLogo>다소니</FooterLogo>
-      <FooterText>사랑하는 마음이 머무는 작은 공간</FooterText>
-    </FooterContainer>
+    <>
+      <FooterContainer>
+        <img src={ImgFooter} />
+      </FooterContainer>
+      <FooterContainer2>
+        <Wrapper>
+          <FooterLabel>Instagram</FooterLabel>
+          <FooterContent>@dasoni.official</FooterContent>
+        </Wrapper>
+        <Wrapper>
+          <FooterLabel>Email</FooterLabel>
+          <FooterContent>dasonimemory@gmail.com</FooterContent>
+        </Wrapper>
+      </FooterContainer2>
+    </>
   );
 }
 
 const FooterContainer = styled.footer`
-  padding: 1.75rem 1.25rem 2.5rem;
-  text-align: center;
-  background: #fff7f0;
+  display: flex;
+  height: 321px;
+  padding: 110px 74px;
+  flex-direction: column;
+  background: #fff;
+  justify-content: center;
 `;
 
-const FooterLogo = styled.div`
-  font-size: 0.95rem;
+const FooterContainer2 = styled.div`
+  display: flex;
+  background: #fff;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 10px;
+  padding-bottom: 37px;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+const FooterLabel = styled.div`
+  color: var(--10, #ddd);
+  font-family: Pretendard;
+  font-size: 13px;
+  font-style: normal;
   font-weight: 700;
-  color: #ff8a3d;
-  margin-bottom: 0.3rem;
+  line-height: 130%; /* 16.9px */
 `;
 
-const FooterText = styled.div`
-  font-size: 0.75rem;
-  color: #b19b86;
+const FooterContent = styled.div`
+  color: var(--10, #ddd);
+  font-family: Pretendard;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 130%; /* 16.9px */
 `;
 
 export default Footer;
