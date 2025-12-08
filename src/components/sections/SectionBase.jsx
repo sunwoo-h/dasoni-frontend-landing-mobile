@@ -21,7 +21,7 @@ export const SectionLabel = styled.div`
   margin-bottom: 35px;
 `;
 
-export const SectionTitle = styled.h2`
+export const SectionTitle = styled.div`
   color: var(--70, #4a4a4a);
   text-align: center;
   font-family: Pretendard;
@@ -32,7 +32,7 @@ export const SectionTitle = styled.h2`
   margin-bottom: 4px;
 `;
 
-export const SectionSubtitle = styled.p`
+export const SectionSubtitle = styled.div`
   color: var(--70, #4a4a4a);
   text-align: center;
   font-family: Pretendard;

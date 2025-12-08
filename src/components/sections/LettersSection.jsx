@@ -4,6 +4,8 @@ import {
   SectionContainer,
   SectionIconWrapper,
   SectionLabel,
+  SectionSubtitle,
+  SectionTitle,
 } from "./SectionBase";
 import styled from "styled-components";
 
@@ -11,6 +13,7 @@ import ImgPostBox from "../../assets/img-postbox.svg";
 import ImgLetter1 from "../../assets/img-letter-1.svg";
 import ImgLetter2 from "../../assets/img-letter-2.svg";
 import ImgLetter3 from "../../assets/img-letter-3.svg";
+import ImgTape from "../../assets/img-tape.svg";
 
 const LETTER_IMAGES = [ImgLetter1, ImgLetter2, ImgLetter3];
 
@@ -129,6 +132,7 @@ const LettersSection = forwardRef((_, ref) => {
       ref={ref}
       data-tab-id="letters"
       $bgGradient="linear-gradient(180deg, #FFEBEB 0%, #FFFCFC 28.81%, #FFFCFC 77.84%, #FFEBEB 100%)"
+      style={{ paddingBottom: "90px" }}
     >
       <SectionIconWrapper>
         <img
@@ -175,7 +179,7 @@ const LettersSection = forwardRef((_, ref) => {
             } else {
               // 뒤에 있는 카드들: 오른쪽으로 겹쳐지게
               const scale = 1 - depth * 0.04;
-              const tx = depth * 30; // 👉 오른쪽으로 이동
+              const tx = depth * 20; // 👉 오른쪽으로 이동
               const ty = depth * -25;
               const rot = depth * 3;
 
@@ -208,6 +212,20 @@ const LettersSection = forwardRef((_, ref) => {
           })}
         </LetterCardStack>
       </LetterStackWrapper>
+
+      <SectionTitle style={{ marginTop: "110px" }}>
+        고인의 목소리로 재현한
+        <br />
+        AI 음성 편지를 받을 수 있어요
+      </SectionTitle>
+      <SectionSubtitle style={{ marginBottom: "80px" }}>
+        나를 부르던 다정한 애칭, 우리가 나눴던 추억을
+        <br />
+        목소리로 다시 만날 수 있어요
+      </SectionSubtitle>
+      <TapeImg src={ImgTape} />
+      <div>음성파일 들어가애됨</div>
+      <VoiceText>실제 ㅇㅇㅇ씨의 음성으로 재현한 테스트 편지입니다.</VoiceText>
     </SectionContainer>
   );
 });
@@ -256,4 +274,19 @@ const LetterImage = styled.img`
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+`;
+
+const TapeImg = styled.img`
+  justify-self: flex-end;
+  display: block;
+`;
+
+const VoiceText = styled.div`
+  color: #ffc8c8;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 161%; /* 20.93px */
 `;
