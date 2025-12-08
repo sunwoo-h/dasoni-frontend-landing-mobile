@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const SectionContainer = styled.section`
+export const SectionContainer = styled.div`
   background: ${({ $bgGradient }) => $bgGradient || "#fff7f0"};
 `;
 
