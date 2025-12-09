@@ -7,6 +7,7 @@ import {
   SectionTitle,
 } from "./SectionBase";
 import styled, { keyframes } from "styled-components";
+import ReserveConfirmModal from "../ReserveConfirmModal";
 
 const ReserveSection = forwardRef((_, ref) => {
   const [gender, setGender] = useState("male");
@@ -15,6 +16,8 @@ const ReserveSection = forwardRef((_, ref) => {
   // ✅ 생년월일 상태 & DatePicker 모달 상태
   const [birthDate, setBirthDate] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // 섹션 진입 시 애니메이션 트리거
   useEffect(() => {
@@ -132,7 +135,9 @@ const ReserveSection = forwardRef((_, ref) => {
                 <FormInput placeholder="예) dasoni@naver.com" />
               </FormColumn>
             </FormRow>
-            <ReserveButton type="button">사전 예약 제출하기</ReserveButton>
+            <ReserveButton type="button" onClick={() => setIsConfirmOpen(true)}>
+              사전 예약 제출하기
+            </ReserveButton>
           </ReserveForm>
         </FadeInItem>
       </SectionContainer>
@@ -144,6 +149,9 @@ const ReserveSection = forwardRef((_, ref) => {
           onChange={handleSelectDate}
           onClose={() => setIsDatePickerOpen(false)}
         />
+      )}
+      {isConfirmOpen && (
+        <ReserveConfirmModal onClose={() => setIsConfirmOpen(false)} />
       )}
     </>
   );
@@ -493,7 +501,7 @@ const DatePickerOverlay = styled.div`
 
 const DatePickerBox = styled.div`
   width: 100%;
-  max-width: 480px;
+  max-width: 430px;
   background: #ffffff;
   border-radius: 20px 20px 0 0;
   padding: 20px 24px 24px;
