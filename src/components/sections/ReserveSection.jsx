@@ -74,15 +74,13 @@ const ReserveSection = forwardRef((_, ref) => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from("dasoni-reservations")
-        .insert([
-          {
-            gender,
-            birth_date: birthDate,
-            email,
-          },
-        ]);
+      const { error } = await supabase.from("dasoni-reservations").insert([
+        {
+          gender,
+          birth_date: birthDate,
+          email,
+        },
+      ]);
 
       if (error) {
         console.error("Supabase insert error:", error);
