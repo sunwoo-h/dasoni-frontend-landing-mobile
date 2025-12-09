@@ -7,7 +7,7 @@ import {
   SectionSubtitle,
   SectionTitle,
 } from "./SectionBase";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 import ImgPostBox from "../../assets/img-postbox.svg";
 import ImgLetter1 from "../../assets/img-letter-1.svg";
@@ -335,13 +335,18 @@ const LettersSection = forwardRef((_, ref) => {
                   }
                 : {};
 
+              const shouldWiggle =
+                isFront && !dragState.isDragging && leaving.dir === 0;
+
               return (
                 <SwipeCard
                   key={cardIndex}
                   style={{ transform, opacity, filter, zIndex }}
                   {...handlers}
                 >
-                  <LetterImage src={image} alt={`letter-${cardIndex + 1}`} />
+                  <CardVisual $wiggle={shouldWiggle}>
+                    <LetterImage src={image} alt={`letter-${cardIndex + 1}`} />
+                  </CardVisual>
                 </SwipeCard>
               );
             })}
@@ -443,11 +448,26 @@ const LetterCardStack = styled.div`
 const SwipeCard = styled.div`
   position: absolute;
   inset: 0;
-  overflow: hidden;
-  box-shadow: 4.5px -2.7px 1.8px 0 rgba(0, 0, 0, 0.22);
   touch-action: none;
   transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+`;
+
+const CardVisual = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: 4.5px -2.7px 1.8px 0 rgba(0, 0, 0, 0.22);
   background-color: #fffdf7;
+  border-radius: 0; /* 필요하면 radius 추가 */
+
+  transform-origin: center bottom;
+
+  animation: ${({ $wiggle }) =>
+    $wiggle
+      ? css`
+          ${cardWiggle} 1.8s ease-in-out infinite
+        `
+      : "none"};
 `;
 
 const LetterImage = styled.img`
@@ -557,4 +577,16 @@ const PlayerProgressCircle = styled.div`
   height: 0.8125rem;
   background: #0e0e0e;
   border-radius: 50%;
+`;
+
+const cardWiggle = keyframes`
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-0.5deg);
+  }
+  75% {
+    transform: rotate(0.5deg);
+  }
 `;
