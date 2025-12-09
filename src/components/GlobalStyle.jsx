@@ -1,16 +1,9 @@
+// GlobalStyle.jsx (혹은 .js)
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: "Pretendard";
-    font-weight: 100 900;
-    font-display: swap;
-    src:
-      url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.woff2")
-        format("woff2-variations"),
-      url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-regular.woff2")
-        format("woff2");
-  }
+  /* ✅ Pretendard CDN CSS만 가져오기 */
+  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 
   * {
     margin: 0;

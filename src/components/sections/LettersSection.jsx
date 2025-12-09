@@ -14,6 +14,7 @@ import ImgLetter1 from "../../assets/img-letter-1.svg";
 import ImgLetter2 from "../../assets/img-letter-2.svg";
 import ImgLetter3 from "../../assets/img-letter-3.svg";
 import ImgTape from "../../assets/img-tape.svg";
+import SampleVoice from "../../assets/sample-voice.mp3";
 
 const LETTER_IMAGES = [ImgLetter1, ImgLetter2, ImgLetter3];
 
@@ -43,7 +44,7 @@ const LettersSection = forwardRef((_, ref) => {
           }
         });
       },
-      { threshold: 0.5 } // 섹션의 30% 보이면 발동
+      { threshold: 0.3 } // 섹션의 30% 보이면 발동
     );
 
     observer.observe(target);
@@ -300,10 +301,11 @@ const LettersSection = forwardRef((_, ref) => {
           <TapeImg src={ImgTape} />
         </FadeInItem>
 
-        <FadeInItem $visible={isVoiceVisible} $delay="0.3s">
-          {/* TODO: 여기 나중에 실제 음성 플레이어 컴포넌트 들어갈 자리 */}
-          <div>음성파일 들어가애됨</div>
-        </FadeInItem>
+        <VoicePlayerWrapper $visible={isVoiceVisible}>
+          <audio controls src={SampleVoice}>
+            브라우저에서 오디오를 지원하지 않습니다.
+          </audio>
+        </VoicePlayerWrapper>
 
         <FadeInItem $visible={isVoiceVisible} $delay="0.4s">
           <VoiceText>
@@ -387,4 +389,19 @@ const VoiceSectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const VoicePlayerWrapper = styled.div`
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 18px;
+
+  /* ✅ 페이드 인 효과 */
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? "0" : "20px")});
+  transition: opacity 0.6s ease-out 0.3s, transform 0.6s ease-out 0.3s;
+
+  audio {
+    width: 100%;
+  }
 `;
