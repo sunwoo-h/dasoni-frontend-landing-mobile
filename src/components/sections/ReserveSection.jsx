@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import {
   SectionContainer,
   SectionIconWrapper,
@@ -10,6 +10,33 @@ import styled from "styled-components";
 
 const ReserveSection = forwardRef((_, ref) => {
   const [gender, setGender] = useState("male");
+  const [isVisible, setIsVisible] = useState(false);
+
+  // 섹션 진입 시 애니메이션 트리거
+  useEffect(() => {
+    if (!ref || !("current" in ref)) return;
+    const target = ref.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.unobserve(entry.target); // 한 번만
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [ref]);
 
   return (
     <SectionContainer
@@ -19,57 +46,85 @@ const ReserveSection = forwardRef((_, ref) => {
       style={{ paddingBottom: "25px" }}
     >
       <SectionIconWrapper>
-        <ReserveInfo style={{ marginTop: "55px", marginBottom: "27px" }}>
-          사전예약 후 다소니를 가장 먼저 만나보세요
-        </ReserveInfo>
+        <FadeInItem $visible={isVisible} $delay="0s">
+          <ReserveInfo style={{ marginTop: "55px", marginBottom: "27px" }}>
+            사전예약 후 다소니를 가장 먼저 만나보세요
+          </ReserveInfo>
+        </FadeInItem>
       </SectionIconWrapper>
-      <ReserveLabel>사전예약 기한</ReserveLabel>
-      <ReserveContent style={{ marginBottom: "15px" }}>
-        2025. 12. 10. ~ 25. 12. 20. (목)
-      </ReserveContent>
-      <ReserveLabel>사전예약 헤택</ReserveLabel>
-      <ReserveContent style={{ marginBottom: "28px" }}>
-        AI 음성 편지 생성, AI 이미지 생성 무료 이용
-      </ReserveContent>
-      <ReserveGuide>사전 예약 신청을 위해 아래 폼을 입력해주세요</ReserveGuide>
-      <ReserveForm>
-        <FormRow>
-          <FormColumn>
-            <FormLabel>성별</FormLabel>
-            <FormLabel>생년월일</FormLabel>
-            <FormLabel>이메일 주소</FormLabel>
-          </FormColumn>
 
-          <FormColumn>
-            <GenderToggle>
-              <GenderButton
-                type="button"
-                $active={gender === "male"}
-                onClick={() => setGender("male")}
-              >
-                남자
-              </GenderButton>
-              <GenderButton
-                type="button"
-                $active={gender === "female"}
-                onClick={() => setGender("female")}
-              >
-                여자
-              </GenderButton>
-            </GenderToggle>
+      <FadeInItem $visible={isVisible} $delay="0.1s">
+        <ReserveLabel>사전예약 기한</ReserveLabel>
+      </FadeInItem>
+      <FadeInItem $visible={isVisible} $delay="0.15s">
+        <ReserveContent style={{ marginBottom: "15px" }}>
+          2025. 12. 10. ~ 25. 12. 20. (목)
+        </ReserveContent>
+      </FadeInItem>
 
-            <FormInput placeholder="2000/12/12" />
-            <FormInput placeholder="예) dasoni@naver.com" />
-          </FormColumn>
-        </FormRow>
-        <ReserveButton type="button">사전 예약 제출하기</ReserveButton>
-      </ReserveForm>
+      <FadeInItem $visible={isVisible} $delay="0.25s">
+        <ReserveLabel>사전예약 혜택</ReserveLabel>
+      </FadeInItem>
+      <FadeInItem $visible={isVisible} $delay="0.3s">
+        <ReserveContent style={{ marginBottom: "28px" }}>
+          AI 음성 편지 생성, AI 이미지 생성 무료 이용
+        </ReserveContent>
+      </FadeInItem>
+
+      <FadeInItem $visible={isVisible} $delay="0.4s">
+        <ReserveGuide>
+          사전 예약 신청을 위해 아래 폼을 입력해주세요
+        </ReserveGuide>
+      </FadeInItem>
+
+      <FadeInItem $visible={isVisible} $delay="0.5s">
+        <ReserveForm>
+          <FormRow>
+            <FormColumn>
+              <FormLabel>성별</FormLabel>
+              <FormLabel>생년월일</FormLabel>
+              <FormLabel>이메일 주소</FormLabel>
+            </FormColumn>
+
+            <FormColumn>
+              <GenderToggle>
+                <GenderButton
+                  type="button"
+                  $active={gender === "male"}
+                  onClick={() => setGender("male")}
+                >
+                  남자
+                </GenderButton>
+                <GenderButton
+                  type="button"
+                  $active={gender === "female"}
+                  onClick={() => setGender("female")}
+                >
+                  여자
+                </GenderButton>
+              </GenderToggle>
+
+              <FormInput placeholder="2000/12/12" />
+              <FormInput placeholder="예) dasoni@naver.com" />
+            </FormColumn>
+          </FormRow>
+          <ReserveButton type="button">사전 예약 제출하기</ReserveButton>
+        </ReserveForm>
+      </FadeInItem>
     </SectionContainer>
   );
 });
 
 const SectionIconReserve = styled.div`
   font-size: 2rem;
+`;
+
+// ✅ 페이드 인 공통 래퍼
+const FadeInItem = styled.div`
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? "0" : "20px")});
+  transition: opacity 0.6s ease-out ${({ $delay }) => $delay || "0s"},
+    transform 0.6s ease-out ${({ $delay }) => $delay || "0s"};
 `;
 
 const ReserveInfo = styled.div`
@@ -118,7 +173,7 @@ const ReserveGuide = styled.div`
 const ReserveForm = styled.div`
   background: #ffffff;
   border-radius: 13px;
-  padding: 30px;
+  padding: 30px 30px 35px 30px;
   margin: 0 25px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.06);
   border: 1px solid #f1eeea;
@@ -126,7 +181,7 @@ const ReserveForm = styled.div`
 
 const FormRow = styled.div`
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
   margin-bottom: 25px;
 `;
 
@@ -150,7 +205,6 @@ const FormLabel = styled.div`
 const GenderToggle = styled.div`
   display: grid;
   width: 120px;
-
   grid-template-columns: repeat(2, 1fr);
   border-radius: 8px;
   background: #f9f8f7;
@@ -198,7 +252,7 @@ const FormInput = styled.input`
 
 const ReserveButton = styled.div`
   display: flex;
-  width: 290px;
+  width: 100%;
   height: 54px;
   padding: 13px 0;
   justify-content: center;
