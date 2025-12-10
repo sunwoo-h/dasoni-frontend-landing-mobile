@@ -1,8 +1,8 @@
 import React, { useRef, useState, useCallback } from "react";
 import styled, { keyframes, css } from "styled-components";
-import ImgFrame from "../assets/img-frame.svg";
-import ImgLogo from "../assets/img-logo.svg";
-import ImgHouse from "../assets/img-house.svg";
+import ImgFrame from "../assets/img-frame.png";
+import ImgLogo from "../assets/img-logo.png";
+import ImgHouse from "../assets/img-house.png";
 import { InlineReserveButton } from "./FloatingReserveButton";
 
 function Header({ inlineRef, onReserveClick }) {
@@ -83,6 +83,8 @@ const baseFadeItem = css`
 `;
 
 const FrameImg = styled.img`
+  width: 50px;
+
   margin-bottom: 25px;
   ${baseFadeItem};
 
@@ -95,6 +97,7 @@ const FrameImg = styled.img`
 `;
 
 const LogoImg = styled.img`
+  width: 135px;
   margin-bottom: 15px;
   ${baseFadeItem};
 
@@ -127,6 +130,7 @@ const Title = styled.div`
 
 const HouseImg = styled.img`
   margin-bottom: 45px;
+  width: 275px;
   ${baseFadeItem};
 
   ${({ $ready }) =>
