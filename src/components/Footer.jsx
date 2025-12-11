@@ -40,7 +40,13 @@ function Footer() {
       <FooterContainer2>
         {/* Instagram 부분만 애니메이션 */}
         <FadeInItem $visible={isVisible} $delay="0.1s">
-          <Wrapper>
+          <Wrapper
+            as="a"
+            href="https://www.instagram.com/dasoni.official/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none" }}
+          >
             <FooterLabel>Instagram</FooterLabel>
             <FooterContent>@dasoni.official</FooterContent>
           </Wrapper>
