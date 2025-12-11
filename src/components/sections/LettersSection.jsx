@@ -542,7 +542,7 @@ const TapeWheelRight = styled.img`
 `;
 
 const barBounce = keyframes`
-  0%   { transform: scaleY(0.7); }
+  0%   { transform: scaleY(0.4); }
   20%  { transform: scaleY(1.3); }
   40%  { transform: scaleY(0.85); }
   60%  { transform: scaleY(1.15); }
