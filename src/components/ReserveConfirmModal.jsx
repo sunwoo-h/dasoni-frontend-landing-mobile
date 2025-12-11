@@ -31,9 +31,7 @@ export default function ReserveConfirmModal({ onClose }) {
           신청해주셔서 감사드리며, 앞으로 잘 부탁드립니다 😊
         </ConfirmText>
 
-        <ConfirmButton type="button" onClick={onClose}>
-          확인
-        </ConfirmButton>
+        <ConfirmButton onClick={onClose}>확인</ConfirmButton>
       </ConfirmBox>
     </ConfirmOverlay>
   );
@@ -97,8 +95,18 @@ const ConfirmButton = styled.div`
   align-items: center;
   align-self: stretch;
 
+  color: var(--70, #313131);
+  text-align: center;
+  /* Heading3 */
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 145%; /* 29px */
+
   border-radius: 8px;
   border: 1px solid var(--5, #e9e9e9);
   background: var(--main, #ffbc67);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.04);
+  cursor: pointer;
 `;
