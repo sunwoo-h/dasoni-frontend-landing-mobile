@@ -178,7 +178,7 @@ const ReserveSection = forwardRef((_, ref) => {
 
                 {/* ✅ 이메일 입력을 state에 연결 */}
                 <FormInput
-                  placeholder="예) dasoni@naver.com"
+                  placeholder="dasoni@naver.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

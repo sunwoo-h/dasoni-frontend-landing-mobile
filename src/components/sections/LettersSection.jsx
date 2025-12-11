@@ -14,6 +14,8 @@ import ImgLetter1 from "../../assets/img-letter-1.svg";
 import ImgLetter2 from "../../assets/img-letter-2.svg";
 import ImgLetter3 from "../../assets/img-letter-3.svg";
 import ImgTape from "../../assets/img-tape.png";
+import ImgWheelLeft from "../../assets/img-wheel-left.png";
+import ImgWheelRight from "../../assets/img-wheel-right.png";
 import SampleVoice from "../../assets/sample-voice.mp3";
 
 import PlayIcon from "../../assets/icon-play.svg";
@@ -374,11 +376,25 @@ const LettersSection = forwardRef((_, ref) => {
 
         <FadeInItem $visible={isVoiceVisible} $delay="0.2s">
           <TapeWrapper>
+            {/* 뒤에서 움직이는 막대들 */}
+            <WaveBars>
+              {Array.from({ length: 50 }).map((_, idx) => (
+                <WaveBar
+                  key={idx}
+                  $delay={idx}
+                  // 각 막대마다 약간 다른 속도로 흔들리게
+                  $speed={0.9 + (idx % 5) * 0.7}
+                />
+              ))}
+            </WaveBars>
             <TapeImg src={ImgTape} />
+            {/* 왼쪽 휠 */}
+            <TapeWheelLeft src={ImgWheelLeft} alt="left-wheel" />
+            {/* 오른쪽 휠 */}
+            <TapeWheelRight src={ImgWheelRight} alt="right-wheel" />
           </TapeWrapper>
         </FadeInItem>
-
-        {/* 🎵 커스텀 음성 플레이어 */}
+        {/* 커스텀 음성 플레이어 */}
         <VoicePlayerWrapper $visible={isVoiceVisible}>
           <PlayerPlayButton
             src={isPlaying ? PauseIcon : PlayIcon}
@@ -477,15 +493,88 @@ const LetterImage = styled.img`
   pointer-events: none;
 `;
 
-const TapeImg = styled.img`
-  display: block;
-  width: 366px;
-`;
-
 const TapeWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: flex-end; /* 👉 오른쪽 끝으로 붙이기 */
+  position: relative; /* 🔥 휠 이미지를 위에 올리기 위해 필요 */
+`;
+
+const TapeImg = styled.img`
+  display: block;
+  width: 167px;
+  margin-right: 60px;
+  z-index: 0;
+`;
+
+const tapeWheelSpin = keyframes`
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+`;
+
+// 🔸 왼쪽 휠
+const TapeWheelLeft = styled.img`
+  position: absolute;
+
+  /* TapeImg 기준 위치 (대략 값이니까 필요하면 숫자 살짝씩 조정해도 됨) */
+  right: 153px;
+  top: 50%;
+
+  width: 25px;
+  transform: translate(-50%, -50%);
+  animation: ${tapeWheelSpin} 2.2s linear infinite;
+`;
+
+// 🔸 오른쪽 휠
+const TapeWheelRight = styled.img`
+  position: absolute;
+
+  right: 84px;
+  top: 50%;
+
+  width: 25px;
+  transform: translate(-50%, -50%);
+  animation: ${tapeWheelSpin} 2.2s linear infinite;
+`;
+
+const barBounce = keyframes`
+  0%   { transform: scaleY(0.7); }
+  20%  { transform: scaleY(1.3); }
+  40%  { transform: scaleY(0.85); }
+  60%  { transform: scaleY(1.15); }
+  80%  { transform: scaleY(0.9); }
+  100% { transform: scaleY(0.7); }
+`;
+
+/* 막대 전체 래퍼 - 테이프 뒤에 깔림 */
+const WaveBars = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px; /* 👉 너가 말한 gap 4px */
+  pointer-events: none; /* 클릭 방해 X */
+  z-index: 0;
+`;
+
+const WaveBar = styled.div`
+  width: 3.5px;
+  height: 60px;
+  border-radius: 150px;
+  background: rgba(253, 185, 145, 0.43);
+
+  /* ✅ 가운데를 기준으로 위아래로 늘어나는 느낌 */
+  transform-origin: center;
+  transform: scaleY(0.7); /* 초기 길이 */
+
+  /* ✅ 전체 속도 살짝 느리게 (1.8~2.4초 사이) */
+  animation: ${barBounce} ${({ $speed }) => $speed || 1.9}s ease-in-out infinite;
+  animation-delay: ${({ $delay }) => `${$delay * 0.06}s`};
 `;
 
 const VoiceText = styled.div`
